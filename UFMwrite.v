@@ -70,7 +70,12 @@ always @(posedge clk) begin //WRITE TO UFM
 	case (writecontrol_) //data addresses and values - HARD CODED FOR NOW. CHANGE AS NEEDED FOR TESTING. READ COMMENTS FIRST.
 			4'b0000 : begin
 				write_addr_ <= 16'h0; //psRef and relay resets
-				writedata_ <= 32'h0000001e;	//test value: writedata_[10] = relay1reset, writedata_[11] = relay2reset, writedata_[9:0] = psRef
+				writedata_ <= 32'h000000C3;	//test value: writedata_[10] = relay1reset, writedata_[11] = relay2reset, writedata_[9:0] = psRef
+				//1V = 32'h00001000
+				//5V = 32'h000000C3
+				//10V = 32'h00000059
+				//12V = 32'h00000049
+				//15V = 32'h0000003A
 			end
 			4'b0001 : begin
 				write_addr_ <= 16'h1; //sgRefFreq

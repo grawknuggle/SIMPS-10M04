@@ -116,7 +116,7 @@ set_location_assignment PIN_86 -to FG_EN
 set_location_assignment PIN_118 -to PS_EN
 set_location_assignment PIN_91 -to CLK_25M
 set_location_assignment PIN_123 -to CLK100k
-set_location_assignment PIN_85 -to CLK_FSYNC
+set_location_assignment PIN_111 -to CLK_FSYNC
 set_location_assignment PIN_89 -to CLK_SCLK
 set_global_assignment -name VERILOG_FILE sigGen.v
 set_global_assignment -name SDC_FILE SIMPS.sdc

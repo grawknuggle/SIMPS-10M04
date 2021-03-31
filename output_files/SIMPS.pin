@@ -84,9 +84,9 @@ RESERVED_INPUT_WITH_WEAK_PULLUP : 11        :        :                   :      
 RESERVED_INPUT_WITH_WEAK_PULLUP : 12        :        :                   :         : 1A        :                
 RESERVED_INPUT_WITH_WEAK_PULLUP : 13        :        :                   :         : 1A        :                
 RESERVED_INPUT_WITH_WEAK_PULLUP : 14        :        :                   :         : 1A        :                
-PS_ANA_IN                    : 15        : input  : 2.5 V             :         : 1B        : N              
+RESERVED_INPUT_WITH_WEAK_PULLUP : 15        :        :                   :         : 1B        :                
 ~ALTERA_TMS~ / RESERVED_INPUT_WITH_WEAK_PULLUP : 16        : input  : 2.5 V Schmitt Trigger :         : 1B        : N              
-RESERVED_INPUT_WITH_WEAK_PULLUP : 17        :        :                   :         : 1B        :                
+PS_ANA_IN                    : 17        : input  : 2.5 V             :         : 1B        : N              
 ~ALTERA_TCK~ / RESERVED_INPUT : 18        : input  : 2.5 V Schmitt Trigger :         : 1B        : N              
 ~ALTERA_TDI~ / RESERVED_INPUT_WITH_WEAK_PULLUP : 19        : input  : 2.5 V Schmitt Trigger :         : 1B        : N              
 ~ALTERA_TDO~                 : 20        : output : 2.5 V             :         : 1B        : N              
@@ -154,7 +154,7 @@ MeasIn[1]                    : 81        : input  : 2.5 V             :         
 VCCIO5                       : 82        : power  :                   : 2.5V    : 5         :                
 GND                          : 83        : gnd    :                   :         :           :                
 MeasIn[0]                    : 84        : input  : 2.5 V             :         : 5         : Y              
-CLK_FSYNC                    : 85        : output : 2.5 V             :         : 5         : Y              
+RESERVED_INPUT_WITH_WEAK_PULLUP : 85        :        :                   :         : 5         :                
 FG_EN                        : 86        : output : 2.5 V             :         : 5         : Y              
 ADC_PDN                      : 87        : output : 2.5 V             :         : 5         : Y              
 CLK_SDI                      : 88        : output : 2.5 V             :         : 6         : Y              
@@ -180,7 +180,7 @@ VCCA3                        : 107       : power  :                   : 3.0V/3.3
 VCC_ONE                      : 108       : power  :                   : 3.0V/3.3V :           :                
 VCC_ONE                      : 109       : power  :                   : 3.0V/3.3V :           :                
 RESERVED_INPUT_WITH_WEAK_PULLUP : 110       :        :                   :         : 7         :                
-RESERVED_INPUT_WITH_WEAK_PULLUP : 111       :        :                   :         : 7         :                
+CLK_FSYNC                    : 111       : output : 2.5 V             :         : 7         : Y              
 RESERVED_INPUT_WITH_WEAK_PULLUP : 112       :        :                   :         : 7         :                
 RESERVED_INPUT_WITH_WEAK_PULLUP : 113       :        :                   :         : 7         :                
 RESERVED_INPUT_WITH_WEAK_PULLUP : 114       :        :                   :         : 7         :                
