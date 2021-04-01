@@ -5,7 +5,7 @@ output PSU_POT_SCLK,
 output PSU_POT_SYNC,
 input PSU_POT_RDY,
 output PS_EN,
-input CLK_25M,
+input CLK_IN, //WAS CLK_25M
 output FG_EN,
 output CLK_FSYNC,
 output CLK_SCLK,
@@ -59,9 +59,9 @@ wire enable_rise;
 reg PS_en_;
 reg FG_en_;
 
-assign LED_dev = 1'b1;
-assign LED_pow = PS_en_;
-assign LED_sig = FG_en_;
+//assign LED_dev = 1'b1;
+//assign LED_pow = PS_en_;
+//assign LED_sig = FG_en_;
 assign PS_EN = PS_en_;
 assign FG_EN = FG_en_;
 
@@ -95,7 +95,6 @@ wire [7:0] readstate;
 wire [15:0] read_addr;
 wire [15:0] write_addr;
 
-assign dataready = 1'b1; //TEMP ENABLE DATAREADY. WILL BE REPLACED AFTER SERIAL COMMUNICATION IMPLEMENTATION. SET TO 0 TO DISABLE UFM WRITE
 
 assign data_addr = controlstate[2] ? read_addr : write_addr; //SETS DATA_ADDR BASED ON CONTROLSTATE
 assign burstcount = controlstate[2] ?5'h6 : 5'h1; //SETS BURSTCOUNT BASED ON CONTROLSTATE - MUST BE 1 WHEN WRITING
@@ -103,8 +102,6 @@ assign burstcount = controlstate[2] ?5'h6 : 5'h1; //SETS BURSTCOUNT BASED ON CON
 //ADC
 wire [9:0] psDig;
 reg [11:0] sgDig;
-
-assign ADC_PDN = 1'b1; //DISABLE EXTERNAL ADC FOR INITIAL TESTING
 
 //PSU
 wire [9:0] psRef;
@@ -116,6 +113,36 @@ wire [11:0] sgDP [7:0];
 wire [3:0] SGclock_state;
 
 
+//////////////////////
+//////////////////////
+//////////////////////
+//DEBUG STUFF
+wire debugLED;
+wire CLK_25M;
+wire LED_prog_flash;
+
+	clkctrl clkctrl0 ( //GLOBAL CLOCK BUFFER, MAY OR MAY NOT DO ANYTHING
+		.inclk  (CLK_IN),  //  altclkctrl_input.inclk
+		.outclk (CLK_25M)  // altclkctrl_output.outclk
+	);
+
+//CHANGE THESE FOR DEBUGGING
+assign dataready = 1'b1; //TEMP ENABLE DATAREADY. WILL BE REPLACED AFTER SERIAL COMMUNICATION IMPLEMENTATION. SET TO 0 TO DISABLE UFM WRITE. IF SET TO 0, LED_prog WILL BLINK WHEN RESET AND ENABLE ARE TAKEN HIGH	
+assign debugLED = 1'b0; //SET TO 0 FOR NORMAL LED FUNCTION. SET TO 1 TO FORCE LEDS TO DISPLAY CONTROLSTATE
+assign ADC_PDN = 1'b1; //DISABLE EXTERNAL ADC WHEN HIGH
+
+//DON'T CHANGE THESE
+assign LED_dev = debugLED ? controlstate[0] : 1'b1;
+assign LED_prog = debugLED ? controlstate[1] : LED_prog_flash;
+assign LED_pow = debugLED ? controlstate[2] : PS_en_;
+assign LED_sig = debugLED ? controlstate[3] : FG_en_;
+
+//END DEBUG
+//////////////////////
+//////////////////////
+//////////////////////
+			
+			
 	ADC_INT ADC0 ( //NOT CURRENTLY FUNCTIONAL
 		.adc_pll_clock_clk      (CLK_25M),      //  adc_pll_clock.clk
 		.adc_pll_locked_export  (pll_locked),  // adc_pll_locked.export
@@ -170,7 +197,7 @@ debounce #(.MAX_COUNT(6)) d_e ( //debounce enable
 ledflash #(.COUNT(16'd3000)) progStat ( //LED control - currently only for prog LED
 	.clk (CLK10k),
 	.toggle (progLEDstat), //00=off, 01=blink at .clk/.COUNT hz, 10=on
-	.pulse (LED_prog)
+	.pulse (LED_prog_flash)
 );
 
 	ufm ufm0 (

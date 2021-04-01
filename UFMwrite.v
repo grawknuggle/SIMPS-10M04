@@ -9,7 +9,6 @@ module UFMwrite (
 	output [15:0] write_addr,
 	input [1:0] csr_status,
 	output [31:0] writedata
-
 );
 
 reg ufmwrite_;
