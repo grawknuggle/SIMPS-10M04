@@ -160,7 +160,7 @@ ADC_PDN                      : 87        : output : 3.3-V LVTTL       :         
 CLK_SDI                      : 88        : output : 3.3-V LVTTL       :         : 6         : Y              
 CLK_SCLK                     : 89        : output : 3.3-V LVTTL       :         : 6         : Y              
 RESERVED_INPUT_WITH_WEAK_PULLUP : 90        :        :                   :         : 6         :                
-CLK_IN                       : 91        : input  : 3.3-V LVTTL       :         : 6         : Y              
+CLK_IN                       : 91        : input  : 3.3-V LVCMOS      :         : 6         : Y              
 RESERVED_INPUT_WITH_WEAK_PULLUP : 92        :        :                   :         : 6         :                
 RESERVED_INPUT_WITH_WEAK_PULLUP : 93        :        :                   :         : 6         :                
 VCCIO6                       : 94        : power  :                   : 3.3V    : 6         :                
