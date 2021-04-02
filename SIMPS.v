@@ -41,7 +41,7 @@ input SW_ena
 
 //clocks
 wire CLK10M;
-wire CLK10k;
+wire CLK50M;
 wire CLK100k_;
 wire pll_locked;
 
@@ -155,15 +155,15 @@ assign LED_sig = debugLED ? controlstate[3] : FG_en_;
 		.reset_sink_reset_n     (ufmreset_n),     //     reset_sink.reset_n
 //		.response_valid         (<connected-to-response_valid>),         //       response.valid
 //		.response_channel       (<connected-to-response_channel>),       //               .channel
-		.response_data          (psDig),          //               .data
+		.response_data          (psDig)          //               .data
 //		.response_startofpacket (<connected-to-response_startofpacket>), //               .startofpacket
 //		.response_endofpacket   (<connected-to-response_endofpacket>)    //               .endofpacket
 	);
 
 PLL	PLL_inst (
-	.inclk0 (CLK_25M), //25M in from crystal
+	.inclk0 (CLK_25M), //25M in from crystal MAKE SURE TO CHANGE THIS BACK TO 25M IN THE IP
 	.c0 (CLK10M), //ADC 10M clk
-	.c1 (CLK10k), //PS_Pot 10k clk
+	.c1 (CLK50M), //PS_Pot 10k clk
 	.c2 (CLK100k_), //PSU 100k clk
 	.locked (pll_locked) //lock for ADC
 	);
@@ -194,8 +194,8 @@ debounce #(.MAX_COUNT(6)) d_e ( //debounce enable
 	.rise (enable_rise) //high for 1 clock period on posedge enable
 );
 
-ledflash #(.COUNT(16'd3000)) progStat ( //LED control - currently only for prog LED
-	.clk (CLK10k),
+ledflash #(.COUNT(16'd30000)) progStat ( //LED control - currently only for prog LED
+	.clk (CLK100k),
 	.toggle (progLEDstat), //00=off, 01=blink at .clk/.COUNT hz, 10=on
 	.pulse (LED_prog_flash)
 );
@@ -223,7 +223,7 @@ psPot p0 ( //potentiometer control
 	.psRef (psRef),
 	.SYNC (PSU_POT_SYNC),
 	.DIN (PSU_POT_DIN),
-	.clk (CLK10k),
+	.clk (CLK100k),
 	.SPI_CLK (PSU_POT_SCLK),
 	.controlstate (controlstate),
 	.psPot_state (psPot_state)
