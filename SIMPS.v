@@ -5,7 +5,7 @@ output PSU_POT_SCLK,
 output PSU_POT_SYNC,
 input PSU_POT_RDY,
 output PS_EN,
-input CLK_IN, //WAS CLK_25M
+input CLK_25M, 
 output FG_EN,
 output CLK_FSYNC,
 output CLK_SCLK,
@@ -62,8 +62,8 @@ reg FG_en_;
 //assign LED_dev = 1'b1;
 //assign LED_pow = PS_en_;
 //assign LED_sig = FG_en_;
-assign PS_EN = PS_en_;
-assign FG_EN = FG_en_;
+//assign PS_EN = PS_en_;
+//assign FG_EN = FG_en_;
 
 //top-level FSM
 reg [3:0] controlstate;
@@ -112,22 +112,50 @@ wire [23:0] sgRefFreq;
 wire [11:0] sgDP [7:0];
 wire [3:0] SGclock_state;
 
+//SERIAL COMMS
+wire rd_en;
+wire [7:0] rd_data;
+wire rd_empty;
+wire wr_en;
+wire [7:0] wr_data;
+wire wr_full;
+reg [7:0] program_data [0:21];
+wire [7:0] measurement_data [0:97];
+reg psOverride;
+reg fgOverride;
+wire PS_OV; //power supply override from front end
+wire FG_OV; //function gen override from front end
+assign PS_EN = psOverride ? PS_OV : PS_en_; //PS_EN obeys main FSM until front end overrides state
+assign FG_EN = fgOverride ? FG_OV : FG_en_; //FG_EN obeys main FSM until front end overrides state
+reg relay1Override;
+reg relay2Override;
+wire relay1_OV;
+wire relay2_OV;
+wire Relay1;
+wire Relay2;
+assign Relay1Reset = relay1Override ? relay1_OV : Relay1;
+assign Relay2Reset = relay2Override ? relay2_OV : Relay2;
+reg psRefOverride;
+wire [9:0] psRef_OV;
+wire [9:0] psRef_;
+assign psRef = psRefOverride ? psRef_OV : psRef_;
+
 
 //////////////////////
 //////////////////////
 //////////////////////
 //DEBUG STUFF
 wire debugLED;
-wire CLK_25M;
+//wire CLK_25M;
 wire LED_prog_flash;
 
-	clkctrl clkctrl0 ( //GLOBAL CLOCK BUFFER, MAY OR MAY NOT DO ANYTHING
-		.inclk  (CLK_IN),  //  altclkctrl_input.inclk
-		.outclk (CLK_25M)  // altclkctrl_output.outclk
-	);
+//	clkctrl clkctrl0 ( //GLOBAL CLOCK BUFFER, MAY OR MAY NOT DO ANYTHING
+//		.inclk  (CLK_IN),  //  altclkctrl_input.inclk
+//		.outclk (CLK_25M)  // altclkctrl_output.outclk
+//	);
 
 //CHANGE THESE FOR DEBUGGING
-assign dataready = 1'b1; //TEMP ENABLE DATAREADY. WILL BE REPLACED AFTER SERIAL COMMUNICATION IMPLEMENTATION. SET TO 0 TO DISABLE UFM WRITE. IF SET TO 0, LED_prog WILL BLINK WHEN RESET AND ENABLE ARE TAKEN HIGH	
+//assign dataready = 1'b1; //TEMP ENABLE DATAREADY. WILL BE REPLACED AFTER SERIAL COMMUNICATION IMPLEMENTATION. SET TO 0 TO DISABLE UFM WRITE. IF SET TO 0, LED_prog WILL BLINK WHEN RESET AND ENABLE ARE TAKEN HIGH	
 assign debugLED = 1'b0; //SET TO 0 FOR NORMAL LED FUNCTION. SET TO 1 TO FORCE LEDS TO DISPLAY CONTROLSTATE
 assign ADC_PDN = 1'b1; //DISABLE EXTERNAL ADC WHEN HIGH
 
@@ -270,7 +298,7 @@ UFMread UFMread0 ( //read from UFM
 	.controlstate (controlstate),
 	.ufmread (ufmread),
 	.read_addr (read_addr),
-	.psRef (psRef),
+	.psRef (psRef_),
 	.sgRefFreq (sgRefFreq),
 	.sgDP0 (sgDP[0]),
 	.sgDP1 (sgDP[1]),
@@ -280,8 +308,8 @@ UFMread UFMread0 ( //read from UFM
 	.sgDP5 (sgDP[5]),
 	.sgDP6 (sgDP[6]),
 	.sgDP7 (sgDP[7]),
-	.relay1 (Relay1Reset),
-	.relay2 (Relay2Reset),
+	.relay1 (Relay1),
+	.relay2 (Relay2),
 	.waitrequest (waitrequest),
 	.counter (readstate)
 );
@@ -299,6 +327,88 @@ sigGen SG0 ( //sigGen loop
 	.sgDP7 (sgDP[7]),
 	.sgOut (SGout)
 );
+
+ft245_async_fifo #(
+    .read_depth(3),
+    .write_depth(3),
+    .same_clocks(0)
+    ) ft245 (
+	 .reset (reset_rise),
+    /* external connections */
+    .D (DATA_BUS),  /* bi-directional data */
+    .RXFn (RXFn),     /* receive full (data to receive) - active low */
+    .TXEn (TXEn),     /* transmit empty (data can be sent) - active low */
+    .RDn (RDn), /* read data from fifo - active low */
+    .WRn (WRn), /* write data to fifo - active low */
+    /* internal connections */
+    .clk_50mhz (CLK50M),
+    .rw_clk (CLK_25M),
+    .rd_en (rd_en),
+    .rd_data (rd_data),
+    .rd_empty (rd_empty),
+    .wr_en (wr_en),
+    .wr_data (wr_data),
+    .wr_full (wr_full)
+    );
+	 
+protocol proto (
+		.reset (reset_rise),
+		.clk (CLK_25M),
+		.rd_en (rd_en),
+		.wr_en (wr_en),
+		.rd_empty (rd_empty),
+		.wr_full (wr_full),
+		.wr_data (wr_data), 
+		.rd_data (rd_data),
+		.op_mode (controlstate),
+		.ps_en (PS_OV),
+		.fg_en (FG_OV),
+		.ps_sp (psRef_OV),
+		.range ({relay2_OV,relay1_OV}),
+		.program_data (program_data),
+		.program_ready (dataready),
+		.measurement_data (measurement_data)
+	);
+	
+always @(PS_OV or reset_rise) begin
+	if (reset) begin
+		psOverride <= 1'b0;
+	end else begin
+		psOverride <= 1'b1;
+	end
+end
+
+always @(FG_OV or reset_rise) begin
+	if (reset) begin
+		fgOverride <= 1'b0;
+	end else begin
+		fgOverride <= 1'b1;
+	end
+end
+
+always @(relay1_OV or reset_rise) begin
+	if (reset) begin
+		relay1Override <= 1'b0;
+	end else begin
+		relay1Override <= 1'b1;
+	end
+end
+
+always @(relay2_OV or reset_rise) begin
+	if (reset) begin
+		relay2Override <= 1'b0;
+	end else begin
+		relay2Override <= 1'b1;
+	end
+end
+
+always @(psRef_OV or reset_rise) begin
+	if (reset) begin
+		psRefOverride <= 1'b0;
+	end else begin
+		psRefOverride <= 1'b1;
+	end
+end
 
 always @(posedge CLK_25M) begin
 	if (reset_rise) begin //TRIGGER RESET PROCESS WHEN RESET SW GOES HIGH
