@@ -287,7 +287,8 @@ UFMwrite UFMwrite0 ( //write to UFM
 	.writestate (writestate),
 	.write_addr (write_addr),
 	.csr_status (csr_readdata[1:0]),
-	.writedata (writedata)
+	.writedata (writedata),
+	.program_data (program_data)
 
 );
 

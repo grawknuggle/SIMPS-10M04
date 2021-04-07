@@ -199,7 +199,6 @@ set_global_assignment -name VERILOG_FILE async_fifo.v
 set_global_assignment -name QSYS_FILE clkctrl.qsys
 set_global_assignment -name VERILOG_FILE sigGen.v
 set_global_assignment -name SDC_FILE SIMPS.sdc
-set_global_assignment -name VERILOG_FILE UFMwrite.v
 set_global_assignment -name VERILOG_FILE UFMread.v
 set_global_assignment -name VERILOG_FILE SPI_Master_With_Single_CS.v
 set_global_assignment -name VERILOG_FILE spi_master.v
@@ -213,4 +212,5 @@ set_global_assignment -name VERILOG_FILE debounce.v
 set_global_assignment -name QSYS_FILE ADC_INT.qsys
 set_global_assignment -name QIP_FILE PLL.qip
 set_global_assignment -name SYSTEMVERILOG_FILE SIMPS.v
+set_global_assignment -name SYSTEMVERILOG_FILE UFMwrite.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

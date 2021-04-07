@@ -8,7 +8,8 @@ module UFMwrite (
 	output [1:0] writestate,
 	output [15:0] write_addr,
 	input [1:0] csr_status,
-	output [31:0] writedata
+	output [31:0] writedata,
+	input [7:0] program_data [21:0]
 );
 
 reg ufmwrite_;
@@ -66,35 +67,48 @@ always @(posedge clk) begin //WRITE TO UFM
 		end
 
 	endcase
-	case (writecontrol_) //data addresses and values - HARD CODED FOR NOW. CHANGE AS NEEDED FOR TESTING. READ COMMENTS FIRST.
+	case (writecontrol_) //data addresses and values
 			4'b0000 : begin
 				write_addr_ <= 16'h0; //psRef and relay resets
-				writedata_ <= 32'h000000C3;	//test value: writedata_[10] = relay1reset, writedata_[11] = relay2reset, writedata_[9:0] = psRef
-				//1V = 32'h00001000
-				//5V = 32'h000000C3
-				//10V = 32'h00000059
-				//12V = 32'h00000049
-				//15V = 32'h0000003A
+				writedata_[31:24] <= program_data[21];
+				writedata_[23:16] <= 8'h0;
+				writedata_[15:8] <= program_data[1];
+				writedata_[7:0] <= program_data[0];
 			end
 			4'b0001 : begin
 				write_addr_ <= 16'h1; //sgRefFreq
-				writedata_ <= 32'h004c4b40;	//test value: writedata_[23:0] = sgRefFreq
+				writedata_[31:24] <= 8'h0;
+				writedata_[23:16] <= program_data[4];
+				writedata_[15:8] <= program_data[3];
+				writedata_[7:0] <= program_data[2];
 			end
 			4'b0010 : begin
 				write_addr_ <= 16'h2; //sgDP 0-1
-				writedata_ <= 32'h00100100;	//test value: writedata_[11:0] = sgDP[0], writedata_[23:12] = sgDP[1]
+				writedata_[31:24] <= program_data[8];
+				writedata_[23:16] <= program_data[7];
+				writedata_[15:8] <= program_data[6];
+				writedata_[7:0] <= program_data[5];
 			end
 			4'b0011 : begin
 				write_addr_ <= 16'h3; //sgDP 2-3
-				writedata_ <= 32'h00100100; //test value: see previous state, pattern repeats
+				writedata_[31:24] <= program_data[12];
+				writedata_[23:16] <= program_data[11];
+				writedata_[15:8] <= program_data[10];
+				writedata_[7:0] <= program_data[9];
 			end
 			4'b0100 : begin
 				write_addr_ <= 16'h4; //sgDP 4-5
-				writedata_ <= 32'h00100100; //test value: see previous state, pattern repeats
+				writedata_[31:24] <= program_data[16];
+				writedata_[23:16] <= program_data[15];
+				writedata_[15:8] <= program_data[14];
+				writedata_[7:0] <= program_data[13];
 			end
 			4'b0101 : begin
 				write_addr_ <= 16'h5; //sgDP 6-7
-				writedata_ <= 32'h00100100; //test value: see previous state, pattern repeats
+				writedata_[31:24] <= program_data[20];
+				writedata_[23:16] <= program_data[19];
+				writedata_[15:8] <= program_data[18];
+				writedata_[7:0] <= program_data[17];
 			end		
 	endcase
 	

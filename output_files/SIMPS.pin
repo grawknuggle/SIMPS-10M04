@@ -75,7 +75,7 @@ VCCA6                        : 2         : power  :                   : 3.0V/3.3
 ANAIN1                       : 3         :        :                   :         :           :                
 REFGND                       : 4         :        :                   :         :           :                
 ADC_VREF                     : 5         :        :                   :         :           :                
-OEN                          : 6         : output : 3.3-V LVTTL       :         : 1A        : N              
+RESERVED_INPUT               : 6         :        :                   :         : 1A        :                
 SG_ANA_IN                    : 7         : input  : 3.3-V LVTTL       :         : 1A        : Y              
 RESERVED_INPUT               : 8         :        :                   :         : 1A        :                
 VCCIO1A                      : 9         : power  :                   : 3.3V    : 1A        :                
@@ -181,9 +181,9 @@ VCC_ONE                      : 108       : power  :                   : 3.0V/3.3
 VCC_ONE                      : 109       : power  :                   : 3.0V/3.3V :           :                
 RESERVED_INPUT               : 110       :        :                   :         : 7         :                
 RDn                          : 111       : output : 3.3-V LVTTL       :         : 7         : Y              
-PS_ANA_IN                    : 112       : input  : 3.3-V LVTTL       :         : 7         : N              
+RESERVED_INPUT               : 112       :        :                   :         : 7         :                
 RWn                          : 113       : output : 3.3-V LVTTL       :         : 7         : Y              
-RESERVED_INPUT               : 114       :        :                   :         : 7         :                
+PS_ANA_IN                    : 114       : input  : 3.3-V LVTTL       :         : 7         : N              
 VCC_ONE                      : 115       : power  :                   : 3.0V/3.3V :           :                
 GND                          : 116       : gnd    :                   :         :           :                
 VCCIO7                       : 117       : power  :                   : 3.3V    : 7         :                
@@ -204,7 +204,7 @@ RESERVED_INPUT               : 131       :        :                   :         
 RESERVED_INPUT               : 132       :        :                   :         : 8         :                
 GND                          : 133       : gnd    :                   :         :           :                
 RESERVED_INPUT               : 134       :        :                   :         : 8         :                
-RESERVED_INPUT               : 135       :        :                   :         : 8         :                
+OEN                          : 135       : output : 3.3-V LVTTL       :         : 8         : N              
 ~ALTERA_nSTATUS~ / RESERVED_INPUT : 136       : input  : 3.3 V Schmitt Trigger :         : 8         : N              
 GND                          : 137       : gnd    :                   :         :           :                
 ~ALTERA_CONF_DONE~ / RESERVED_INPUT : 138       : input  : 3.3 V Schmitt Trigger :         : 8         : N              
