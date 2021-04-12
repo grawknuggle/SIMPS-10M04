@@ -24,7 +24,7 @@ inout [7:0] DATA_BUS,
 input RXFn,
 input TXEn,
 output RDn,
-output RWn,
+output WRn,
 output SIWU,
 input FTDI_CLK,
 output OEN,
@@ -139,6 +139,7 @@ reg psRefOverride;
 wire [9:0] psRef_OV;
 wire [9:0] psRef_;
 assign psRef = psRefOverride ? psRef_OV : psRef_;
+assign SIWU = 1'b1;
 
 
 //////////////////////
