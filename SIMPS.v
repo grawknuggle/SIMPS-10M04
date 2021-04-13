@@ -5,7 +5,7 @@ output PSU_POT_SCLK,
 output PSU_POT_SYNC,
 input PSU_POT_RDY,
 output PS_EN,
-input CLK_IN, //WAS CLK_25M
+input CLK_25M, 
 output FG_EN,
 output CLK_FSYNC,
 output CLK_SCLK,
@@ -118,13 +118,13 @@ wire [3:0] SGclock_state;
 //////////////////////
 //DEBUG STUFF
 wire debugLED;
-wire CLK_25M;
+//wire CLK_25M;
 wire LED_prog_flash;
 
-	clkctrl clkctrl0 ( //GLOBAL CLOCK BUFFER, MAY OR MAY NOT DO ANYTHING
-		.inclk  (CLK_IN),  //  altclkctrl_input.inclk
-		.outclk (CLK_25M)  // altclkctrl_output.outclk
-	);
+//	clkctrl clkctrl0 ( //GLOBAL CLOCK BUFFER, MAY OR MAY NOT DO ANYTHING
+//		.inclk  (CLK_IN),  //  altclkctrl_input.inclk
+//		.outclk (CLK_25M)  // altclkctrl_output.outclk
+//	);
 
 //CHANGE THESE FOR DEBUGGING
 assign dataready = 1'b1; //TEMP ENABLE DATAREADY. WILL BE REPLACED AFTER SERIAL COMMUNICATION IMPLEMENTATION. SET TO 0 TO DISABLE UFM WRITE. IF SET TO 0, LED_prog WILL BLINK WHEN RESET AND ENABLE ARE TAKEN HIGH	
