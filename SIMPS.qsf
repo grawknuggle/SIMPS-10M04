@@ -113,12 +113,14 @@ set_location_assignment PIN_87 -to ADC_PDN
 set_location_assignment PIN_46 -to CLK_COMPARATOR
 set_location_assignment PIN_92 -to FG_EN
 set_location_assignment PIN_118 -to PS_EN
+set_location_assignment PIN_26 -to CLK_25M
 set_location_assignment PIN_123 -to CLK100k
 set_location_assignment PIN_90 -to CLK_FSYNC
 set_location_assignment PIN_89 -to CLK_SCLK
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ADC_DCO
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to ADC_PDN
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLK100k
+set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to CLK_25M
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLK_COMPARATOR
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLK_FSYNC
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to CLK_SCLK
@@ -180,10 +182,23 @@ set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SIWU
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW_ena
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to SW_res
 set_instance_assignment -name IO_STANDARD "3.3-V LVTTL" -to TXEn
+set_global_assignment -name ENABLE_OCT_DONE OFF
+set_global_assignment -name USE_CONFIGURATION_DEVICE ON
+set_global_assignment -name CRC_ERROR_OPEN_DRAIN OFF
+set_global_assignment -name RESERVE_ALL_UNUSED_PINS_WEAK_PULLUP "AS INPUT TRI-STATED"
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
+set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
+set_global_assignment -name VERILOG_FILE synchroniser.v
+set_global_assignment -name SYSTEMVERILOG_FILE simps_pv.sv
+set_global_assignment -name SYSTEMVERILOG_FILE protocol.sv
+set_global_assignment -name VERILOG_FILE ft245_async_fifo.v
+set_global_assignment -name VERILOG_FILE fifo.v
+set_global_assignment -name VERILOG_FILE async_fifo.v
 set_global_assignment -name QSYS_FILE clkctrl.qsys
 set_global_assignment -name VERILOG_FILE sigGen.v
 set_global_assignment -name SDC_FILE SIMPS.sdc
-set_global_assignment -name VERILOG_FILE UFMwrite.v
 set_global_assignment -name VERILOG_FILE UFMread.v
 set_global_assignment -name VERILOG_FILE SPI_Master_With_Single_CS.v
 set_global_assignment -name VERILOG_FILE spi_master.v
@@ -195,16 +210,7 @@ set_global_assignment -name VERILOG_FILE ledflash.v
 set_global_assignment -name VERILOG_FILE sync.v
 set_global_assignment -name VERILOG_FILE debounce.v
 set_global_assignment -name QSYS_FILE ADC_INT.qsys
-set_global_assignment -name VERILOG_FILE SIMPS.v
 set_global_assignment -name QIP_FILE PLL.qip
-set_instance_assignment -name IO_STANDARD "3.3-V LVCMOS" -to CLK_IN
-set_location_assignment PIN_26 -to CLK_IN
-set_global_assignment -name ENABLE_OCT_DONE OFF
-set_global_assignment -name USE_CONFIGURATION_DEVICE ON
-set_global_assignment -name CRC_ERROR_OPEN_DRAIN OFF
-set_global_assignment -name RESERVE_ALL_UNUSED_PINS_WEAK_PULLUP "AS INPUT TRI-STATED"
-set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -rise
-set_global_assignment -name OUTPUT_IO_TIMING_NEAR_END_VMEAS "HALF VCCIO" -fall
-set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -rise
-set_global_assignment -name OUTPUT_IO_TIMING_FAR_END_VMEAS "HALF SIGNAL SWING" -fall
+set_global_assignment -name SYSTEMVERILOG_FILE SIMPS.v
+set_global_assignment -name SYSTEMVERILOG_FILE UFMwrite.v
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

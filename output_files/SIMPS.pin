@@ -27,7 +27,7 @@
  -- VCCINT        : Dedicated power pin, which MUST be connected to VCC  (1.2V).
  -- VCCIO         : Dedicated power pin, which MUST be connected to VCC
  --                 of its bank.
- --                  Bank 1A:       3.3V
+ --                  Bank 1A:       2.5V
  --                  Bank 1B:       3.3V
  --                  Bank 2:       3.3V
  --                  Bank 3:       3.3V
@@ -78,24 +78,24 @@ ADC_VREF                     : 5         :        :                   :         
 RESERVED_INPUT               : 6         :        :                   :         : 1A        :                
 SG_ANA_IN                    : 7         : input  : 3.3-V LVTTL       :         : 1A        : Y              
 RESERVED_INPUT               : 8         :        :                   :         : 1A        :                
-VCCIO1A                      : 9         : power  :                   : 3.3V    : 1A        :                
+VCCIO1A                      : 9         : power  :                   : 2.5V    : 1A        :                
 RESERVED_INPUT               : 10        :        :                   :         : 1A        :                
 RESERVED_INPUT               : 11        :        :                   :         : 1A        :                
 RESERVED_INPUT               : 12        :        :                   :         : 1A        :                
 RESERVED_INPUT               : 13        :        :                   :         : 1A        :                
-RESERVED_INPUT               : 14        :        :                   :         : 1A        :                
+WRn                          : 14        : output : 2.5 V             :         : 1A        : N              
 RESERVED_INPUT               : 15        :        :                   :         : 1B        :                
 ~ALTERA_TMS~ / RESERVED_INPUT_WITH_WEAK_PULLUP : 16        : input  : 3.3 V Schmitt Trigger :         : 1B        : N              
 RESERVED_INPUT               : 17        :        :                   :         : 1B        :                
 ~ALTERA_TCK~ / RESERVED_INPUT : 18        : input  : 3.3 V Schmitt Trigger :         : 1B        : N              
 ~ALTERA_TDI~ / RESERVED_INPUT_WITH_WEAK_PULLUP : 19        : input  : 3.3 V Schmitt Trigger :         : 1B        : N              
 ~ALTERA_TDO~                 : 20        : output : 3.3-V LVTTL       :         : 1B        : N              
-OEN                          : 21        : output : 3.3-V LVTTL       :         : 1B        : N              
+RESERVED_INPUT               : 21        :        :                   :         : 1B        :                
 FTDI_CLK                     : 22        : input  : 3.3-V LVTTL       :         : 1B        : Y              
 VCCIO1B                      : 23        : power  :                   : 3.3V    : 1B        :                
 SIWU                         : 24        : output : 3.3-V LVTTL       :         : 1B        : Y              
 RESERVED_INPUT               : 25        :        :                   :         : 1B        :                
-CLK_IN                       : 26        : input  : 3.3-V LVCMOS      :         : 2         : Y              
+CLK_25M                      : 26        : input  : 3.3-V LVCMOS      :         : 2         : Y              
 TXEn                         : 27        : input  : 3.3-V LVTTL       :         : 2         : Y              
 RXFn                         : 28        : input  : 3.3-V LVTTL       :         : 2         : Y              
 DATA_BUS[7]                  : 29        : bidir  : 3.3-V LVTTL       :         : 2         : Y              
@@ -182,8 +182,8 @@ VCC_ONE                      : 109       : power  :                   : 3.0V/3.3
 RESERVED_INPUT               : 110       :        :                   :         : 7         :                
 RDn                          : 111       : output : 3.3-V LVTTL       :         : 7         : Y              
 RESERVED_INPUT               : 112       :        :                   :         : 7         :                
-RWn                          : 113       : output : 3.3-V LVTTL       :         : 7         : Y              
-RESERVED_INPUT               : 114       :        :                   :         : 7         :                
+RESERVED_INPUT               : 113       :        :                   :         : 7         :                
+PS_ANA_IN                    : 114       : input  : 3.3-V LVTTL       :         : 7         : N              
 VCC_ONE                      : 115       : power  :                   : 3.0V/3.3V :           :                
 GND                          : 116       : gnd    :                   :         :           :                
 VCCIO7                       : 117       : power  :                   : 3.3V    : 7         :                
@@ -204,12 +204,12 @@ RESERVED_INPUT               : 131       :        :                   :         
 RESERVED_INPUT               : 132       :        :                   :         : 8         :                
 GND                          : 133       : gnd    :                   :         :           :                
 RESERVED_INPUT               : 134       :        :                   :         : 8         :                
-RESERVED_INPUT               : 135       :        :                   :         : 8         :                
+OEN                          : 135       : output : 3.3-V LVTTL       :         : 8         : N              
 ~ALTERA_nSTATUS~ / RESERVED_INPUT : 136       : input  : 3.3 V Schmitt Trigger :         : 8         : N              
 GND                          : 137       : gnd    :                   :         :           :                
 ~ALTERA_CONF_DONE~ / RESERVED_INPUT : 138       : input  : 3.3 V Schmitt Trigger :         : 8         : N              
 VCCIO8                       : 139       : power  :                   : 3.3V    : 8         :                
-PS_ANA_IN                    : 140       : input  : 3.3-V LVTTL       :         : 8         : N              
+RESERVED_INPUT               : 140       :        :                   :         : 8         :                
 RESERVED_INPUT               : 141       :        :                   :         : 8         :                
 GND                          : 142       : gnd    :                   :         :           :                
 VCCA4                        : 143       : power  :                   : 3.0V/3.3V :           :                
