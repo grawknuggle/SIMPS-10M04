@@ -6,7 +6,8 @@ module psPot (
 	output SYNC, //active low
 	input [3:0] controlstate,
 	output DIN, //serial output
-	output [3:0] psPot_state
+	output [3:0] psPot_state,
+	input rdy
 	);
 
 //reg [2:0] setup;
@@ -59,7 +60,7 @@ always @(posedge clk) begin
 			reset <= 1'b1;
 			case (psPot_state_) 
 				4'h0 : begin
-					if (TX_rdy == 1'b1) begin
+					if (TX_rdy == 1'b1 && rdy == 1'b1) begin
 						pot_command <= 8'h10;
 						xmit <= 1'b1;
 						psPot_state_ <= 4'h1;
@@ -76,13 +77,14 @@ always @(posedge clk) begin
 				4'h2 : begin
 					xmit <= 1'b0;
 					psPot_state_ <= 4'h3;
+
 				end
 			endcase
 		end
 		4'h2 : begin //config potentiometer settings with command 16'h1802
 			case (psPot_state_) 
 				4'h3 : begin
-					if (TX_rdy == 1'b1) begin
+					if (TX_rdy == 1'b1 && rdy == 1'b1) begin 
 						pot_command <= 8'h18; //transmit 8 bits MSB
 						xmit <= 1'b1;
 						psPot_state_ <= 4'h4;
@@ -107,7 +109,7 @@ always @(posedge clk) begin
 			Dinit <= 12'd1024/((r_psRef + {2'b00,r_psRef[9:2]})-10'd1); //D math
 			case (psPot_state_) 
 				4'h6 : begin
-					if (TX_rdy == 1'b1) begin
+					if (TX_rdy == 1'b1 && rdy == 1'b1) begin
 						pot_command <= {6'b000001, Dinit[9:8]}; //transmit control bits + 2 bits MSB
 						xmit <= 1'b1;
 						psPot_state_ <= 4'h7;

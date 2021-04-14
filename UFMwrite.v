@@ -87,7 +87,7 @@ always @(posedge clk) begin //WRITE TO UFM
 				writedata_[31:24] <= program_data[8];
 				writedata_[23:16] <= program_data[7];
 				writedata_[15:8] <= program_data[6];
-				writedata_[7:0] <= program_data[5];
+				writedata_[7:0] <= program_data[5]; 
 			end
 			4'b0011 : begin
 				write_addr_ <= 16'h3; //sgDP 2-3

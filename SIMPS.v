@@ -161,10 +161,11 @@ assign debugLED = 1'b0; //SET TO 0 FOR NORMAL LED FUNCTION. SET TO 1 TO FORCE LE
 assign ADC_PDN = 1'b1; //DISABLE EXTERNAL ADC WHEN HIGH
 
 //DON'T CHANGE THESE
-assign LED_dev = debugLED ? controlstate[0] : 1'b1;
+//assign LED_dev = debugLED ? controlstate[0] : 1'b1;
+assign LED_dev = debugLED ? controlstate[0] : LED_prog_flash;
 assign LED_prog = debugLED ? controlstate[1] : LED_prog_flash;
 assign LED_pow = debugLED ? controlstate[2] : PS_en_;
-assign LED_sig = debugLED ? controlstate[3] : FG_en_;
+assign LED_sig = debugLED ? controlstate[3] : FG_en_; 
 
 //END DEBUG
 //////////////////////
@@ -223,7 +224,7 @@ debounce #(.MAX_COUNT(6)) d_e ( //debounce enable
 	.rise (enable_rise) //high for 1 clock period on posedge enable
 );
 
-ledflash #(.COUNT(16'd30000)) progStat ( //LED control - currently only for prog LED
+ledflash #(.COUNT(16'd100000)) progStat ( //LED control - currently only for prog LED
 	.clk (CLK100k),
 	.toggle (progLEDstat), //00=off, 01=blink at .clk/.COUNT hz, 10=on
 	.pulse (LED_prog_flash)
@@ -255,7 +256,8 @@ psPot p0 ( //potentiometer control
 	.clk (CLK100k),
 	.SPI_CLK (PSU_POT_SCLK),
 	.controlstate (controlstate),
-	.psPot_state (psPot_state)
+	.psPot_state (psPot_state),
+	.rdy (PSU_POT_RDY)
 );
 
 SGclock SGC0 ( //variable clock control
@@ -419,7 +421,7 @@ always @(posedge CLK_25M) begin
 	end else begin
 		case (controlstate)
 			4'h0 : begin //RESET STATE 1 - TURN OFF PROG LED, RESET UFM, WAIT FOR USER TO TAKE ENABLE HIGH
-				progLEDstat <= 2'b00;
+				progLEDstat <= 2'b01;
 				ufmreset_r <= 1'b0;
 				//ADD SEND RESET STATE TO FRONT END
 				if (enable_rise && reset)
