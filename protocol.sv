@@ -55,11 +55,28 @@ module protocol(
 	
 	// How much program data should we read.
 	logic [7:0] programming_counter = 8'd0;
-	logic [7:0] programming_length = 8'd22;
+	logic [7:0] programming_length = 8'd44; // program_data length x 2
+	
+	// Hack: Make the nibbles into bytes.
+	reg [3:0] program_data_nibbles [0:43]; // Data is sent msbs followed by lsbs. 43 = (22*2)-1
+	always_comb begin
+		for (int i=0;i<22;i++) begin
+			program_data[i] = {program_data_nibbles[i], program_data_nibbles[i+22]}; // Make it look right again... BE SURE TO UPDATE i+# on length change!
+		end
+	end
+	
 	
 	// How much measurement data should we send.
 	logic [7:0] measurement_counter = 8'd0;
-	logic [7:0] measurement_length = 8'd98; // = length of measurement_data
+	logic [7:0] measurement_length = 8'd196; // = length of measurement_data, *2 for hack...
+	
+	reg [3:0] measurement_data_nibbles [0:195];
+	always_comb begin
+		for (int i=0;i<98;i++) begin
+			measurement_data_nibbles[i] = measurement_data[i][7:4];
+			measurement_data_nibbles[i+98] = measurement_data[i][3:0];
+		end
+	end
 	
 	// FSM sequential state transition
 	always_ff @ (posedge clk or posedge reset)
@@ -148,12 +165,12 @@ module protocol(
 				STATE_RANGE_READ : counter <= counter + 4'd1;
 				
 				// 6. Range: Set the data into the range register.
-				STATE_RANGE_SET : range <= rd_data[1:0];
+				STATE_RANGE_SET : range <= rd_data[5:4];
 				
 				// 4g. Mode: Send the current operation mode to the write buffer.
 				STATE_OPMODE_WRITE : begin
-					wr_data[3:0] <= op_mode;
-					wr_data[7:4] <= 4'd0;
+					wr_data[7:4] <= op_mode;
+					wr_data[3:0] <= 4'd0;
 					wr_en <= 1'b1;
 				end
 				
@@ -165,7 +182,7 @@ module protocol(
 				
 				// 6. PS: Set the MSBs for the power supply setpoint.
 				STATE_PS_SET_MSB : begin
-					ps_sp[11:8] <= rd_data[3:0];
+					ps_sp[11:7] <= rd_data[7:3];
 					lockup_counter <= lockup_counter + 24'd1;
 				end
 				
@@ -176,7 +193,11 @@ module protocol(
 				STATE_PS_READ_LSB : counter <= counter + 4'd1;
 				
 				// 9. PS: Set the LSBs for the power supply setpoint.
-				STATE_PS_SET_LSB : ps_sp[7:0] <= rd_data;
+				// orig STATE_PS_SET_LSB : ps_sp[7:0] <= rd_data;
+				STATE_PS_SET_LSB : begin 
+					ps_sp[1:0] <= rd_data[1:0];
+					ps_sp[6:2] <= rd_data[7:3];
+				end
 				
 				// 4i. Prog:  Ask the read buffer for a byte of data.
 				//			Increment the programming counter to keep track of the amount of data we are reading.
@@ -192,7 +213,7 @@ module protocol(
 				//			This state also serves to make sure that there is another byte available to read
 				//			before looping back to the pre read state.
 				STATE_PROG_SET : begin
-					program_data[programming_counter-1] <= rd_data;
+					program_data_nibbles[programming_counter-1] <= rd_data[7:4];
 					lockup_counter <= lockup_counter + 24'd1;
 				end
 				
@@ -208,14 +229,16 @@ module protocol(
 				
 				// 5. Measurement: Write the current measurement byte.
 				STATE_MEAS_WRITE : begin
-					wr_data <= measurement_data[measurement_counter-1];
+					wr_data[7:4] <= measurement_data_nibbles[measurement_counter-1];
+					wr_data[3:0] <= 4'd0;
 					wr_en <= 1'b1;
 				end
 				
 				// 4k. Range: Write the range to the write buffer.
 				STATE_RANGE_WRITE : begin
-					wr_data[1:0] <= range;
-					wr_data[7:2] <= 4'd0;
+					wr_data[7:6] <= 2'd0;
+					wr_data[5:4] <= range;
+					wr_data[3:0] <= 4'd0;
 					wr_en <= 1'b1;
 				end
 				
@@ -246,22 +269,22 @@ module protocol(
 				else if (lockup_counter >= max_wait)
 					next_state = STATE_IDLE;
 				
-				else case (rd_data)
+				else case (rd_data[7:4])
 					// These states do not need to READ.
-					8'h03 : next_state = STATE_PS_DISABLE;
-					8'h04 : next_state = STATE_PS_ENABLE;
-					8'h05 : next_state = STATE_MEAS_PRE_WRITE;
-					8'h07 : next_state = STATE_FG_DISABLE;
-					8'h08 : next_state = STATE_FG_ENABLE;
+					4'h3 : next_state = STATE_PS_DISABLE;
+					4'h4 : next_state = STATE_PS_ENABLE;
+					4'h5 : next_state = STATE_MEAS_PRE_WRITE;
+					4'h7 : next_state = STATE_FG_DISABLE;
+					4'hc : next_state = STATE_FG_ENABLE;
 					
 					// These state need to WRITE, so the write buffer needs to be available.
 					// Going to this again over state IDLE provides for a more immedate operation + no anti-lockup issues.
-					8'h09 :
+					4'h9 :
 						if (!wr_full)
 							next_state = STATE_OPMODE_WRITE;
 						else
 							next_state = STATE_SELECT;
-					8'h0b :
+					4'hb :
 						if (!wr_full)
 							next_state = STATE_RANGE_WRITE;
 						else
@@ -269,22 +292,22 @@ module protocol(
 					
 					// These states need to READ, so there needs to be a byte in the read buffer.
 					// Going to this again over state IDLE provides for a more immedate operation + no anti-lockup issues.
-					8'h01, 8'h80 :
+					4'h1, 4'h8 :
 						if (!rd_empty)
 							next_state = STATE_ECHO_PRE_READ;
 						else
 							next_state = STATE_SELECT;
-					8'h02 :
+					4'h2 :
 						if (!rd_empty)
 							next_state = STATE_PROG_PRE_READ;
 						else
 							next_state = STATE_SELECT;
-					8'h06 :
+					4'h6 :
 						if (!rd_empty)
 							next_state = STATE_RANGE_PRE_READ;
 						else
 							next_state = STATE_SELECT;
-					8'h0a :
+					4'ha :
 						if (!rd_empty)
 							next_state = STATE_PS_PRE_READ_MSB;
 						else
