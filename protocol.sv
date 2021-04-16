@@ -109,7 +109,7 @@ module protocol(
 			wr_en <= 1'b0;
 			lockup_counter <= 24'd0;
 			counter <= 4'd0;
-			program_ready <= 1'b0;
+			//program_ready <= 1'b0;
 			
 			case(state)
 				// 1. The idle state is waiting for a byte to be available.
