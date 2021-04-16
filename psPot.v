@@ -76,8 +76,9 @@ always @(posedge clk) begin
 				end
 				4'h2 : begin
 					xmit <= 1'b0;
-					psPot_state_ <= 4'h3;
-
+                                        if (SYNC) begin //wait for transmit complete 
+					        psPot_state_ <= 4'h3;
+                                        end
 				end
 			endcase
 		end
@@ -100,7 +101,9 @@ always @(posedge clk) begin
 				end
 				4'h5 : begin
 					xmit <= 1'b0;
-					psPot_state_ <= 4'h6;
+                                        if (SYNC) begin //wait for transmit complete
+					        psPot_state_ <= 4'h6;
+                                        end
 				end
 			endcase
 		end
