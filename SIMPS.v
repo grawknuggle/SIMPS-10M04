@@ -125,7 +125,8 @@ reg psOverride;
 reg fgOverride;
 wire PS_OV; //power supply override from front end
 wire FG_OV; //function gen override from front end
-assign PS_EN = psOverride ? PS_OV : PS_en_; //PS_EN obeys main FSM until front end overrides state
+//assign PS_EN = psOverride ? PS_OV : PS_en_; //PS_EN obeys main FSM until front end overrides state
+assign PS_EN = !psOverride ? PS_en_ : (controlstate == 4'h7) ? PS_OV : 1'b0;
 assign FG_EN = fgOverride ? FG_OV : FG_en_; //FG_EN obeys main FSM until front end overrides state
 reg relay1Override;
 reg relay2Override;
