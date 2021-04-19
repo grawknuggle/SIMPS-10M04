@@ -43,8 +43,12 @@ always @ (posedge clk) begin
 				end
 				4'h1 : begin 
 					ufmread <= waitrequest; //bring read low when waitrequest low
-					readstate <= 4'h1;
+                                        if (!ufmread)
+					        readstate <= 4'h2; //advance to final state after ufmread goes low
 				end
+                                4'h2 : begin
+                                        readstate <= 4'h2;
+                                end
 			endcase
 		end
 	endcase
@@ -53,7 +57,7 @@ end
 always @(posedge clk or posedge reset) begin //fsm to save read data to appropriate registers
 	if (reset)
 		counter <= 4'h0;
-	else if (readdatavalid && controlstate == 4'h4)
+	else if (readdatavalid && controlstate == 4'h4 && readstate == 4'h2) //requires successful read and controlstate 4
 		case (counter)
 			4'h0 : begin
 				relay1 <= readdata[10];
