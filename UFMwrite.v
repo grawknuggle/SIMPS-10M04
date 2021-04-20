@@ -72,43 +72,43 @@ always @(posedge clk) begin //WRITE TO UFM
 				write_addr_ <= 16'h0; //psRef and relay resets
 				writedata_[31:24] <= program_data[21];
 				writedata_[23:16] <= 8'h0;
-				writedata_[15:8] <= program_data[1];
-				writedata_[7:0] <= program_data[0];
+				writedata_[15:8] <= program_data[0];
+				writedata_[7:0] <= program_data[1];
 			end
 			4'b0001 : begin
 				write_addr_ <= 16'h1; //sgRefFreq
 				writedata_[31:24] <= 8'h0;
-				writedata_[23:16] <= program_data[4];
+				writedata_[23:16] <= program_data[2];
 				writedata_[15:8] <= program_data[3];
-				writedata_[7:0] <= program_data[2];
+				writedata_[7:0] <= program_data[4];
 			end
 			4'b0010 : begin
 				write_addr_ <= 16'h2; //sgDP 0-1
-				writedata_[31:24] <= program_data[8];
-				writedata_[23:16] <= program_data[7];
-				writedata_[15:8] <= program_data[6];
-				writedata_[7:0] <= program_data[5]; 
+				writedata_[31:24] <= program_data[7];
+				writedata_[23:16] <= program_data[8];
+				writedata_[15:8] <= program_data[5];
+				writedata_[7:0] <= program_data[6]; 
 			end
 			4'b0011 : begin
 				write_addr_ <= 16'h3; //sgDP 2-3
-				writedata_[31:24] <= program_data[12];
-				writedata_[23:16] <= program_data[11];
-				writedata_[15:8] <= program_data[10];
-				writedata_[7:0] <= program_data[9];
+				writedata_[31:24] <= program_data[11];
+				writedata_[23:16] <= program_data[12];
+				writedata_[15:8] <= program_data[9];
+				writedata_[7:0] <= program_data[10];
 			end
 			4'b0100 : begin
 				write_addr_ <= 16'h4; //sgDP 4-5
-				writedata_[31:24] <= program_data[16];
-				writedata_[23:16] <= program_data[15];
-				writedata_[15:8] <= program_data[14];
-				writedata_[7:0] <= program_data[13];
+				writedata_[31:24] <= program_data[15];
+				writedata_[23:16] <= program_data[16];
+				writedata_[15:8] <= program_data[13];
+				writedata_[7:0] <= program_data[14];
 			end
 			4'b0101 : begin
 				write_addr_ <= 16'h5; //sgDP 6-7
-				writedata_[31:24] <= program_data[20];
-				writedata_[23:16] <= program_data[19];
-				writedata_[15:8] <= program_data[18];
-				writedata_[7:0] <= program_data[17];
+				writedata_[31:24] <= program_data[19];
+				writedata_[23:16] <= program_data[20];
+				writedata_[15:8] <= program_data[17];
+				writedata_[7:0] <= program_data[18];
 			end		
 	endcase
 	
