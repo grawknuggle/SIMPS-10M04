@@ -254,7 +254,7 @@ psPot p0 ( //potentiometer control
 	.psRef (psRef),
 	.SYNC (PSU_POT_SYNC),
 	.DIN (PSU_POT_DIN),
-	.clk (CLK100k),
+	.clk (CLK_25M),
 	.SPI_CLK (PSU_POT_SCLK),
 	.controlstate (controlstate),
 	.psPot_state (psPot_state),
